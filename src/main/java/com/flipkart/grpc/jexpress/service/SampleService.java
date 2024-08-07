@@ -5,8 +5,6 @@ import com.flipkart.gjex.core.logging.Logging;
 import com.flipkart.grpc.jexpress.*;
 import com.flipkart.grpc.jexpress.filter.CreateLoggingFilter;
 import com.flipkart.grpc.jexpress.filter.GetLoggingFilter;
-import com.google.inject.Guice;
-import com.google.inject.Provider;
 import io.grpc.stub.StreamObserver;
 import org.apache.commons.configuration.Configuration;
 
@@ -35,8 +33,7 @@ public class SampleService extends UserServiceGrpc.UserServiceImplBase implement
                          @Named("GlobalFlattenedConfig") Configuration flattenedConfig,
                          @Named("GlobalMapConfig") Map mapConfig,
                          @Named("database.driverClass") String driverClass,
-                         @Named("database.properties.hibernate.session.events.log") boolean hibernateGenerateEventLog)
-    {
+                         @Named("database.properties.hibernate.session.events.log") boolean hibernateGenerateEventLog) {
         this.entityManager = entityManager;
         this.sampleConfiguration = sampleConfiguration;
         this.flattenedConfig = flattenedConfig;
@@ -59,15 +56,6 @@ public class SampleService extends UserServiceGrpc.UserServiceImplBase implement
         info("\"database.driverClass\" class in @Named annotation =  " + driverClass);
         info("\"database.properties.hibernate.session.events.log\" in @Named annotation =  " + hibernateGenerateEventLog);
 
-        Test test = new Test();
-        test.setId(1L);
-        test.setName("aravindh");
-        entityManager.getTransaction().begin();
-        entityManager.persist(test);
-        Test test1 = entityManager.find(Test.class, 1);
-        info("Test Object " + test1);
-        entityManager.getTransaction().commit();
-
         // Read values from Flattened config
         info("FlattenedConfig has \"Grpc.server.port\" = " + flattenedConfig.getInt("Grpc.server.port"));
         info("FlattenedConfig has \"database.properties.hibernate.session.events.log\" = " + flattenedConfig.getBoolean("database.properties.hibernate.session.events.log"));
@@ -85,10 +73,18 @@ public class SampleService extends UserServiceGrpc.UserServiceImplBase implement
     public void createUser(CreateRequest request, StreamObserver<CreateResponse> responseObserver) {
         int id = lastId.incrementAndGet();
         userIdToUserNameMap.put(id, request.getUserName());
+
+        entityManager.getTransaction().begin();
+        User user = new User();
+        user.setName("aravindh");
+        entityManager.persist(user);
+        entityManager.getTransaction().commit();
+        info("Test Object " + user);
+
         CreateResponse response = CreateResponse.newBuilder()
                 .setId(id)
                 .setIsCreated(true).
-                        build();
+                build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }

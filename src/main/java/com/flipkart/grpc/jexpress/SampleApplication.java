@@ -5,17 +5,11 @@ import com.flipkart.gjex.core.setup.Bootstrap;
 import com.flipkart.gjex.core.setup.Environment;
 import com.flipkart.gjex.guice.GuiceBundle;
 import com.flipkart.grpc.jexpress.module.SampleModule;
-import com.flipkart.persistence.jpa.JpaPersistMultiSessionService;
-import com.flipkart.persistence.jpa.PersistentUnit;
-import com.google.inject.Guice;
+import com.google.inject.persist.PersistService;
 import com.google.inject.persist.jpa.JpaPersistModule;
-import com.google.inject.persist.jpa.JpaPersistMultiSessionModule;
-import com.google.inject.servlet.ServletModule;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import static com.google.inject.persist.jpa.JpaPersistMultiSessionModule.getConfigFile;
 
 public class SampleApplication extends Application<SampleConfiguration, Map> {
 
@@ -37,6 +31,8 @@ public class SampleApplication extends Application<SampleConfiguration, Map> {
                 .addModules(new SampleModule(), new JpaPersistModule("masterPU"))
                 .build();
         bootstrap.addBundle(guiceBundle);
+        PersistService instance = guiceBundle.getInjector().getInstance(PersistService.class);
+        instance.start();
     }
 
     public static void main(String [] args) throws Exception {
