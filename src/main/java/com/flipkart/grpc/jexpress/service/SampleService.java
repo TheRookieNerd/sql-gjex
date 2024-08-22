@@ -2,6 +2,8 @@ package com.flipkart.grpc.jexpress.service;
 
 import com.flipkart.gjex.core.filter.grpc.MethodFilters;
 import com.flipkart.gjex.core.logging.Logging;
+import com.flipkart.gjex.core.task.ConcurrentTask;
+import com.flipkart.gjex.core.tracing.Traced;
 import com.flipkart.grpc.jexpress.*;
 import com.flipkart.grpc.jexpress.filter.CreateLoggingFilter;
 import com.flipkart.grpc.jexpress.filter.GetLoggingFilter;
@@ -24,6 +26,8 @@ public class SampleService extends UserServiceGrpc.UserServiceImplBase implement
 
     @Override
     @MethodFilters({GetLoggingFilter.class})
+    @Traced
+    @ConcurrentTask(timeout = 300)
     public void getUser(GetRequest request, StreamObserver<GetResponse> responseObserver) {
         User user = entityManager.find(User.class, (long) request.getId());
         if (user == null) {
@@ -40,6 +44,8 @@ public class SampleService extends UserServiceGrpc.UserServiceImplBase implement
 
     @Override
     @MethodFilters({CreateLoggingFilter.class})
+    @Traced
+    @ConcurrentTask(timeout = 300)
     public void createUser(CreateRequest request, StreamObserver<CreateResponse> responseObserver) {
         entityManager.getTransaction().begin();
         Long userId = saveUser(User.builder().name(request.getUserName()).build()).getId();
