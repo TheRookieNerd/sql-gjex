@@ -16,8 +16,6 @@
 package com.flipkart.grpc.jexpress.filter;
 
 import com.flipkart.gjex.core.filter.grpc.GrpcFilter;
-import com.flipkart.grpc.jexpress.GetRequest;
-import com.flipkart.grpc.jexpress.GetResponse;
 import com.google.protobuf.GeneratedMessageV3;
 import io.grpc.Metadata;
 import com.flipkart.gjex.core.filter.RequestParams;

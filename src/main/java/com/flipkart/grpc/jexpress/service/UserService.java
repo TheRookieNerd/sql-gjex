@@ -14,13 +14,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 
-@Named("SampleService")
-public class SampleService extends UserServiceGrpc.UserServiceImplBase implements Logging {
+@Named("UserService")
+public class UserService extends UserServiceGrpc.UserServiceImplBase implements Logging {
 
     private final EntityManager entityManager;
 
     @Inject
-    public SampleService(EntityManager entityManager) {
+    public UserService(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
